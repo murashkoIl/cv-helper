@@ -150,8 +150,7 @@ export class ProjectsStore implements IProjectsStore {
   };
 
   fetchTableData = async () => {
-    const url =
-      "https://script.google.com/macros/s/AKfycbyPOWWTt0fev30xY5on7nJnRlT16p1-e42dgM5w-fH6tmAqzMP4SIrTz5TG0J28fSisrg/exec";
+    const url = import.meta.env.VITE_GOOGLE_SHEET_DEPLOY ?? "";
 
     try {
       const response = await fetch(url);
