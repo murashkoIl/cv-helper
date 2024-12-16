@@ -18,7 +18,7 @@ export const Table: FC<Props> = ({ technologies }) => {
           <tr key={section}>
             <Td $textAlign="left">
               <P $fontWeight="bold" $color="#c63031">
-                {capitalize(section)}
+                {section && capitalize(section)}
               </P>
             </Td>
             <Td width="50%" $textAlign="left">

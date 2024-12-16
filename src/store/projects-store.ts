@@ -32,6 +32,7 @@ export class ProjectsStore implements IProjectsStore {
   summary: ISummaryField = {};
   hasCollisions: boolean = false;
   duplicatedValues: string[] = [];
+  tableLink: string = "";
   name = "";
   roles = "";
   education: string = "";
@@ -149,8 +150,14 @@ export class ProjectsStore implements IProjectsStore {
     });
   };
 
-  fetchTableData = async () => {
-    const url = import.meta.env.VITE_GOOGLE_SHEET_DEPLOY ?? "";
+  setTableLink = (link?: string) => {
+    runInAction(() => {
+      this.tableLink = link || import.meta.env.VITE_GOOGLE_SHEET_DEPLOY;
+    });
+  };
+
+  fetchTableData = async (tableLink?: string) => {
+    const url = tableLink || import.meta.env.VITE_GOOGLE_SHEET_DEPLOY || "";
 
     try {
       const response = await fetch(url);
@@ -167,6 +174,7 @@ export class ProjectsStore implements IProjectsStore {
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error("Failed to fetch table data:", error);
+      throw new Error("Failed to fetch table data");
     }
   };
 }

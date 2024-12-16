@@ -12,6 +12,7 @@ import { RefetchDataButton } from "@/modules/components/RefetchDataButton";
 import { DocumentInput } from "@/modules/components/DocumentInput";
 import { GenerateBrightboxFormatDocumentButton } from "@/modules/components/GenerateBrightBoxFormatDocumentButton";
 import { BackgroundToggleCheckbox } from "@/modules/components/BackgroundToggleCheckbox";
+import { ConnectDatabaseButton } from "@/modules/components/ConnectDatabaseButton";
 
 const isEmpty = <T extends object>(obj: T) => Object.keys(obj).length === 0;
 
@@ -35,6 +36,7 @@ export const MainPage = observer(() => {
         <GenerateDocumentButton />
         <GenerateBrightboxFormatDocumentButton />
         <RefetchDataButton />
+        <ConnectDatabaseButton />
         <TableLink />
         <BackgroundToggleCheckbox />
       </Flex>
