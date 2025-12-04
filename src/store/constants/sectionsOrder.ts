@@ -6,6 +6,7 @@ export const sectionsOrder = [
   SectionsNames.JavascriptLibraries,
   SectionsNames.MobileFrameworks,
   SectionsNames.PhpFrameworks,
+  SectionsNames.JavaFrameworks,
   SectionsNames.ReactNativeLibraries,
   SectionsNames.StateManagementLibraries,
   SectionsNames.FetchingLibraries,
@@ -35,5 +36,7 @@ export const sectionsOrder = [
   SectionsNames.PerformanceMonitoringTools,
   SectionsNames.ModuleBundlers,
   SectionsNames.GraphicEditors,
+  SectionsNames.VersionControlSystems,
+  SectionsNames.AITools,
   SectionsNames.NotFound,
 ];

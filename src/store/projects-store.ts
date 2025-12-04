@@ -32,6 +32,7 @@ export class ProjectsStore implements IProjectsStore {
   summary: ISummaryField = {};
   hasCollisions: boolean = false;
   duplicatedValues: string[] = [];
+  notFoundTechnologies: string[] = [];
   tableLink: string = "";
   name = "";
   roles = "";
@@ -58,7 +59,12 @@ export class ProjectsStore implements IProjectsStore {
   };
 
   private updateTable = () => {
-    this.table = getTableOfTechnologies(this.projects, this.technologiesMap);
+    const { table, notFoundTechnologies } = getTableOfTechnologies(
+      this.projects,
+      this.technologiesMap,
+    );
+    this.table = table;
+    this.notFoundTechnologies = notFoundTechnologies;
   };
 
   private updateProjectsSummaryAndTable = () => {
@@ -84,6 +90,7 @@ export class ProjectsStore implements IProjectsStore {
       this.selfIntro = "";
       this.projects = [];
       this.table = {};
+      this.notFoundTechnologies = [];
       this.nextId = 0;
       this.summary = {};
     });
@@ -136,11 +143,6 @@ export class ProjectsStore implements IProjectsStore {
       const targetProject = this.projects.find((obj) => obj.id === id);
       const splitRegex = /,\s*/;
       const technologiesArr = technologies.split(splitRegex);
-
-      if (targetProject) {
-        targetProject.technologies = technologiesArr ?? [];
-      }
-      this.table = getTableOfTechnologies(this.projects, this.technologiesMap);
 
       if (targetProject) {
         targetProject.technologies = technologiesArr ?? [];

@@ -5,10 +5,13 @@ const summaryWeights: Partial<Record<SectionsNames, number>> = {
   [SectionsNames.ProgrammingLanguages]: 0,
   [SectionsNames.Frontend]: 1,
   [SectionsNames.BackendTechnologies]: 2,
-  [SectionsNames.Containerization]: 3,
-  [SectionsNames.CiCd]: 4,
-  [SectionsNames.Cloud]: 5,
-  [SectionsNames.Databases]: 6,
+  [SectionsNames.JavaFrameworks]: 3,
+  [SectionsNames.Containerization]: 4,
+  [SectionsNames.CiCd]: 5,
+  [SectionsNames.Cloud]: 6,
+  [SectionsNames.Databases]: 7,
+  [SectionsNames.VersionControlSystems]: 8,
+  [SectionsNames.AITools]: 9,
 };
 
 // Summary data must be converted from

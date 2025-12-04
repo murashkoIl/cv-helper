@@ -39,12 +39,20 @@ const sortTableOfTechnologies = (obj: ITechnologiesTableData): ITechnologiesTabl
 export const getTableOfTechnologies = (
   projects: IProject[],
   map: ITechnologiesMap,
-): ITechnologiesTableData => {
+): { table: ITechnologiesTableData; notFoundTechnologies: string[] } => {
   const resultObj: ITechnologiesTableData = {};
+  const notFoundTechnologiesSet = new Set<string>();
+
   projects.forEach((project) => {
     project.technologies?.forEach((techName) => {
       const normalizedTechName = normalizeString(techName);
-      const section = map[normalizedTechName] || { name: "notFound" };
+      const section = map[normalizedTechName];
+
+      if (!section) {
+        notFoundTechnologiesSet.add(techName);
+        return;
+      }
+
       const sectionInResult = resultObj[section.name] ?? [];
 
       const technologyInSection = sectionInResult.find(
@@ -66,5 +74,8 @@ export const getTableOfTechnologies = (
       ];
     });
   });
-  return sortTableOfTechnologies(resultObj);
+
+  const notFoundTechnologies = Array.from(notFoundTechnologiesSet);
+
+  return { table: sortTableOfTechnologies(resultObj), notFoundTechnologies };
 };

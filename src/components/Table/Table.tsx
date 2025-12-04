@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { forwardRef } from "react";
 import { ITechnologiesTableData } from "@/types/storeTypes";
 import { capitalize } from "@/modules/utils/capitalize";
 import { P, Td } from "./styles";
@@ -8,11 +8,11 @@ type Props = {
   technologies: ITechnologiesTableData;
 };
 
-export const Table: FC<Props> = ({ technologies }) => {
+export const Table = forwardRef<HTMLTableElement, Props>(({ technologies }, ref) => {
   const sections = Object.keys(technologies);
 
   return (
-    <table>
+    <table ref={ref}>
       <tbody>
         {sections.map((section) => (
           <tr key={section}>
@@ -47,4 +47,4 @@ export const Table: FC<Props> = ({ technologies }) => {
       </tbody>
     </table>
   );
-};
+});

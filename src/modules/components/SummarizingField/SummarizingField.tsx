@@ -9,26 +9,24 @@ const { Title, Paragraph } = Typography;
 
 type SummaryContentProps = {
   summary: ISummaryField;
-  isDuplicated: (value: string) => boolean;
+  getDuplicatedColor: (value: string) => string | undefined;
 };
 
-const SummaryContent: FC<SummaryContentProps> = ({ summary, isDuplicated }) => {
+const SummaryContent: FC<SummaryContentProps> = ({ summary, getDuplicatedColor }) => {
   return (
     <div>
       {Object.entries(summary).map(([key, valueArr]) => {
         if (valueArr.length === 0) return;
-
         return (
           <div key={key}>
             <Title level={3}>{key}</Title>
             <Paragraph>
-              {valueArr.map((value) => {
+              {valueArr.map((value, index, array) => {
+                const color = getDuplicatedColor(value);
                 return (
-                  <span key={value + `${isDuplicated(value)}`}>
-                    <span style={{ backgroundColor: isDuplicated(value) ? "#FF7373" : "none" }}>
-                      {value}
-                    </span>
-                    ,{" "}
+                  <span key={value + `${!!color}`}>
+                    <span style={{ backgroundColor: color || "transparent" }}>{value}</span>
+                    {index === array.length - 1 ? "." : ","}{" "}
                   </span>
                 );
               })}
@@ -40,9 +38,13 @@ const SummaryContent: FC<SummaryContentProps> = ({ summary, isDuplicated }) => {
   );
 };
 
+const DUPLICATE_COLORS = ["#FFC1C1", "#C1FFC1", "#C1C1FF", "#FFFFC1", "#FFC1FF", "#C1FFFF"];
+
+const tableOfTechnologiesLink = import.meta.env.VITE_TABLE_LINK ?? "";
+
 export const SummarizingField = observer(() => {
   const {
-    projects: { summary, hasCollisions, duplicatedValues },
+    projects: { summary, hasCollisions, duplicatedValues, notFoundTechnologies },
   } = useStore();
 
   const normalizedDuplicatedValues = useMemo(
@@ -50,24 +52,60 @@ export const SummarizingField = observer(() => {
     [duplicatedValues],
   );
 
-  const isDuplicated = useCallback(
+  const duplicatedColorMap = useMemo(() => {
+    const map = new Map<string, string>();
+    normalizedDuplicatedValues.forEach((value, index) => {
+      map.set(value, DUPLICATE_COLORS[index % DUPLICATE_COLORS.length]);
+    });
+    return map;
+  }, [normalizedDuplicatedValues]);
+
+  const getDuplicatedColor = useCallback(
     (value: string) => {
-      return normalizedDuplicatedValues.includes(normalizeString(value));
+      return duplicatedColorMap.get(normalizeString(value));
     },
-    [normalizedDuplicatedValues],
+    [duplicatedColorMap],
   );
 
   return (
     <Flex vertical gap="small" align="stretch" style={{ width: "30%" }}>
-      <Title level={3}>Summarizing field</Title>
-      <SummaryContent summary={summary} isDuplicated={isDuplicated} />
       {hasCollisions && (
-        <Paragraph style={{ backgroundColor: "#FF7373" }}>
-          Fields has duplicated technologies names above or table has not founded technologies
+        <Paragraph
+          style={{
+            backgroundColor: "#e31717",
+            padding: "10px",
+            color: "#fff",
+            fontSize: "20px",
+          }}
+        >
+          Fields has duplicated technologies names above:
           <br />
-          {duplicatedValues.join(", ")}
+          <b style={{ fontStyle: "normal", color: "#09f2f6" }}>{duplicatedValues.join(", ")}</b>
         </Paragraph>
       )}
+      {notFoundTechnologies.length > 0 && (
+        <Paragraph
+          style={{
+            backgroundColor: "#e31717",
+            padding: "10px",
+            color: "#fff",
+            fontSize: "20px",
+          }}
+        >
+          Table has not found technologies! Please add them to the{" "}
+          <a
+            href={tableOfTechnologiesLink}
+            target="_blank"
+            style={{ color: "#fff", textDecoration: "underline" }}
+          >
+            table of technologies
+          </a>{" "}
+          and refetch database:
+          <br />
+          <b style={{ fontStyle: "normal", color: "#09f2f6" }}>{notFoundTechnologies.join(", ")}</b>
+        </Paragraph>
+      )}
+      <SummaryContent summary={summary} getDuplicatedColor={getDuplicatedColor} />
     </Flex>
   );
 });

@@ -25,10 +25,13 @@ export const getSummary = (projects: IProject[], technologiesMap: ITechnologiesM
     [SectionsNames.ProgrammingLanguages]: [],
     [SectionsNames.Frontend]: [],
     [SectionsNames.BackendTechnologies]: [],
+    [SectionsNames.JavaFrameworks]: [],
     [SectionsNames.Containerization]: [],
     [SectionsNames.CiCd]: [],
     [SectionsNames.Cloud]: [],
     [SectionsNames.Databases]: [],
+    [SectionsNames.VersionControlSystems]: [],
+    [SectionsNames.AITools]: [],
   };
   const technologies = projects.flatMap(({ technologies }) => technologies ?? []);
   const uniqueTechnologies = Array.from(new Set<string>(technologies));

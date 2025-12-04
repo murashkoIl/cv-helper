@@ -52,6 +52,9 @@ export interface IProjectsStore {
   selfIntro: string;
   projects: IProject[];
   summary: ISummaryField;
+  hasCollisions: boolean;
+  duplicatedValues: string[];
+  notFoundTechnologies: string[];
   addSelfInfo: (selfInfo: SelfInfo) => void;
   clearStore: () => void;
   addEmptyProject: () => void;
