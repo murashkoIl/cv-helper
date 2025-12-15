@@ -45,7 +45,8 @@ export const getTableOfTechnologies = (
 
   projects.forEach((project) => {
     project.technologies?.forEach((techName) => {
-      const normalizedTechName = normalizeString(techName);
+      const techNameWithoutBraces = techName.replace(/\([^()]*\)/g, "");
+      const normalizedTechName = normalizeString(techNameWithoutBraces);
       const section = map[normalizedTechName];
 
       if (!section) {
@@ -67,7 +68,7 @@ export const getTableOfTechnologies = (
       resultObj[section.name] = [
         ...sectionInResult,
         {
-          name: techName,
+          name: techNameWithoutBraces.trim(),
           range: project.dateRange,
           lastUsed: project.lastDate.slice(0, 4),
         },

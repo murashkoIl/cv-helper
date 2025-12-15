@@ -1,9 +1,10 @@
 import { observer } from "mobx-react-lite";
 import { useStore } from "@/hooks";
-import { Flex, Typography } from "antd";
+import { Flex, Typography, message } from "antd";
 import { normalizeString } from "@/modules/utils/normalizeString";
-import { FC, useCallback, useMemo } from "react";
+import { FC, useCallback, useMemo, useRef } from "react";
 import { ISummaryField } from "@/types/storeTypes";
+import { Button } from "@/ui-kit/Button";
 
 const { Title, Paragraph } = Typography;
 
@@ -18,9 +19,29 @@ const SummaryContent: FC<SummaryContentProps> = ({ summary, getDuplicatedColor }
       {Object.entries(summary).map(([key, valueArr]) => {
         if (valueArr.length === 0) return;
         return (
-          <div key={key}>
-            <Title level={3}>{key}</Title>
-            <Paragraph>
+          <div key={key} style={{ marginLeft: "10px" }}>
+            <Title
+              level={3}
+              style={{
+                marginBottom: "3pt",
+                marginTop: "0pt",
+                lineHeight: "1.15",
+                fontSize: "16px",
+                fontFamily: '"Mulish", sans-serif',
+                color: "#353535",
+              }}
+            >
+              {key}
+            </Title>
+            <Paragraph
+              style={{
+                marginBottom: "10pt",
+                lineHeight: "1.15",
+                fontSize: "16px",
+                fontFamily: '"Mulish", sans-serif',
+                color: "#353535",
+              }}
+            >
               {valueArr.map((value, index, array) => {
                 const color = getDuplicatedColor(value);
                 return (
@@ -67,8 +88,34 @@ export const SummarizingField = observer(() => {
     [duplicatedColorMap],
   );
 
+  const summaryRef = useRef<HTMLDivElement>(null);
+
+  const handleCopy = () => {
+    if (!summaryRef.current) return;
+
+    const selection = window.getSelection();
+    if (!selection) return;
+
+    const range = document.createRange();
+    range.selectNode(summaryRef.current);
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    try {
+      document.execCommand("copy");
+      message.success("Summary copied to clipboard!");
+    } catch (e) {
+      message.error("Failed to copy summary.");
+    } finally {
+      selection.removeAllRanges();
+    }
+  };
+
+  console.log(hasCollisions, duplicatedValues);
+
   return (
     <Flex vertical gap="small" align="stretch" style={{ width: "30%" }}>
+      <Button onClick={handleCopy}>Copy Summary (Please paste using Ctrl+V only)</Button>
       {hasCollisions && (
         <Paragraph
           style={{
@@ -105,7 +152,9 @@ export const SummarizingField = observer(() => {
           <b style={{ fontStyle: "normal", color: "#09f2f6" }}>{notFoundTechnologies.join(", ")}</b>
         </Paragraph>
       )}
-      <SummaryContent summary={summary} getDuplicatedColor={getDuplicatedColor} />
+      <div ref={summaryRef}>
+        <SummaryContent summary={summary} getDuplicatedColor={getDuplicatedColor} />
+      </div>
     </Flex>
   );
 });

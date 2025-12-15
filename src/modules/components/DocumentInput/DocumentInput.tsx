@@ -2,13 +2,18 @@ import { useStore } from "@/hooks";
 import { calculateDateRange } from "@/modules/utils/calculateDateRange";
 import mammoth from "mammoth";
 import { observer } from "mobx-react-lite";
-import { ChangeEventHandler } from "react";
+import { ChangeEventHandler, useRef, useState } from "react";
 import { findProjectsData, findSelfInfo } from "./utils";
+import { Button, Flex } from "antd";
+import { Title } from "@/ui-kit/Typography";
 
 export const DocumentInput = observer(() => {
   const {
     projects: { clearStore, addProject, addSelfInfo },
   } = useStore();
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [fileName, setFileName] = useState<string>("");
 
   const handleFileChange: ChangeEventHandler<HTMLInputElement> = async (event) => {
     const file = event.target.files?.[0] || null;
@@ -41,13 +46,24 @@ export const DocumentInput = observer(() => {
           });
         });
       };
+      setFileName(file.name);
       reader.readAsArrayBuffer(file);
     }
   };
 
   return (
-    <div>
-      <input type="file" onChange={handleFileChange} />
-    </div>
+    <Flex gap={10} align="center">
+      <Button onClick={() => fileInputRef.current?.click()}>Upload Document</Button>
+      <input
+        ref={fileInputRef}
+        id="fileInput"
+        type="file"
+        onChange={handleFileChange}
+        hidden={true}
+      />
+      <Title level={5} style={{ margin: 0 }}>
+        {fileName}
+      </Title>
+    </Flex>
   );
 });

@@ -10,6 +10,7 @@ import {
 import { getCurrentMonth } from "@/modules/utils/getCurrentMonth";
 import { normalizeDates } from "@/modules/utils/normalizeDates";
 import { getSummary, getTableOfTechnologies, getTechnologiesMap } from "./helpers";
+import { splitStringByCommaWithoutCommasInBraces } from "@/modules/components/DocumentInput/utils/helpers/splitStringByCommaWithoutCommasInBraces";
 
 const currentMonth = getCurrentMonth();
 
@@ -141,8 +142,7 @@ export class ProjectsStore implements IProjectsStore {
   setTechnologies = (id: number, technologies: string) => {
     runInAction(() => {
       const targetProject = this.projects.find((obj) => obj.id === id);
-      const splitRegex = /,\s*/;
-      const technologiesArr = technologies.split(splitRegex);
+      const technologiesArr = splitStringByCommaWithoutCommasInBraces(technologies);
 
       if (targetProject) {
         targetProject.technologies = technologiesArr ?? [];

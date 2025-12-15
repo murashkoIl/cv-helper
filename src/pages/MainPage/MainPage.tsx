@@ -33,12 +33,12 @@ export const MainPage = observer(() => {
       <Flex gap={10} align="center">
         <ReloadPageButton />
         <DocumentInput />
-        <GenerateDocumentButton />
-        <GenerateBrightboxFormatDocumentButton />
+        {/* <GenerateDocumentButton /> */}
+        {/* <GenerateBrightboxFormatDocumentButton /> */}
         <RefetchDataButton />
-        <ConnectDatabaseButton />
+        {/* <ConnectDatabaseButton /> */}
         <TableLink />
-        <BackgroundToggleCheckbox />
+        {/* <BackgroundToggleCheckbox /> */}
       </Flex>
       <Flex gap={100} justify="start">
         <ListProjects />

@@ -4,21 +4,70 @@ import { IProject, ITechnologiesMap } from "@/types/storeTypes";
 
 type Map = Partial<Record<SectionsNames, string[]>>;
 
+const getTechName = (tech: string) => {
+  const openParenIndex = tech.indexOf("(");
+  if (openParenIndex !== -1 && tech.endsWith(")")) {
+    return tech.substring(0, openParenIndex).trim();
+  }
+  return tech;
+};
+
 function findDuplicates(arr: string[]) {
-  const seen = new Set();
-  const duplicates: string[] = [];
+  const map = new Map<string, Set<string>>();
 
   arr.forEach((elem) => {
-    const normalizedElem = normalizeString(elem);
-    if (seen.has(normalizedElem)) {
-      duplicates.push(elem);
-    } else {
-      seen.add(normalizedElem);
+    const name = getTechName(elem);
+    const normalizedElem = normalizeString(name);
+
+    if (!map.has(normalizedElem)) {
+      map.set(normalizedElem, new Set());
+    }
+    map.get(normalizedElem)!.add(name);
+  });
+
+  const duplicates: string[] = [];
+  map.forEach((names) => {
+    if (names.size > 1) {
+      duplicates.push(...Array.from(names));
     }
   });
 
   return duplicates;
 }
+
+const mergeTechnologies = (technologies: string[]) => {
+  const mergedMap = new Map<string, { originalName: string; details: Set<string> }>();
+
+  technologies.forEach((tech) => {
+    const openParenIndex = tech.indexOf("(");
+    let name = tech;
+    let detailsStr = "";
+
+    if (openParenIndex !== -1 && tech.endsWith(")")) {
+      name = tech.substring(0, openParenIndex).trim();
+      detailsStr = tech.substring(openParenIndex + 1, tech.length - 1);
+    }
+
+    const normalizedKey = normalizeString(name);
+
+    if (!mergedMap.has(normalizedKey)) {
+      mergedMap.set(normalizedKey, { originalName: name, details: new Set() });
+    }
+
+    if (detailsStr) {
+      const parts = detailsStr
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+      parts.forEach((p) => mergedMap.get(normalizedKey)!.details.add(p));
+    }
+  });
+
+  return Array.from(mergedMap.values()).map(({ originalName, details }) => {
+    if (details.size === 0) return originalName;
+    return `${originalName} (${Array.from(details).join(", ")})`;
+  });
+};
 
 export const getSummary = (projects: IProject[], technologiesMap: ITechnologiesMap) => {
   const summary: Map = {
@@ -34,14 +83,17 @@ export const getSummary = (projects: IProject[], technologiesMap: ITechnologiesM
     [SectionsNames.AITools]: [],
   };
   const technologies = projects.flatMap(({ technologies }) => technologies ?? []);
-  const uniqueTechnologies = Array.from(new Set<string>(technologies));
-  const normalizedSet = Array.from(new Set<string>(technologies.map(normalizeString)));
+  const mergedTechnologies = mergeTechnologies(technologies);
+  const uniqueTechnologies = Array.from(new Set<string>(mergedTechnologies));
 
-  const techDetails = uniqueTechnologies.map((tech) => ({
-    original: tech,
-    normalized: normalizeString(tech),
-    map: technologiesMap[normalizeString(tech)],
-  }));
+  const techDetails = uniqueTechnologies.map((tech) => {
+    const techNameWithoutBraces = tech.replace(/\([^()]*\)/g, "");
+    return {
+      original: tech,
+      normalized: normalizeString(tech),
+      map: technologiesMap[normalizeString(techNameWithoutBraces)],
+    };
+  });
 
   techDetails
     .sort((a, b) => {
@@ -73,8 +125,8 @@ export const getSummary = (projects: IProject[], technologiesMap: ITechnologiesM
     }
   }
 
-  const hasCollisions = uniqueTechnologies.length !== normalizedSet.length;
-  const duplicatedValues = findDuplicates(uniqueTechnologies);
+  const duplicatedValues = findDuplicates(technologies);
+  const hasCollisions = duplicatedValues.length > 0;
 
   return { summary, hasCollisions, duplicatedValues };
 };

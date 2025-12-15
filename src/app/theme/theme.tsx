@@ -6,7 +6,12 @@ type ThemeProviderProps = {
 };
 
 const themeConfig: ThemeConfig = {
-  token: { fontFamilyCode: "Mulish", colorText: "#353535", colorSuccess: "#c63031" },
+  token: {
+    fontFamilyCode: "Mulish",
+    fontFamily: "Mulish, sans-serif",
+    colorText: "#353535",
+    colorSuccess: "#c63031",
+  },
 };
 
 export const ThemeProvider: FC<ThemeProviderProps> = ({ children }) => {

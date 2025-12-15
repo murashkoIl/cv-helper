@@ -2,7 +2,6 @@ import { getCurrentMonth } from "@/modules/utils/getCurrentMonth";
 import { normalizeString } from "@/modules/utils/normalizeString";
 import {
   isNormalizedName,
-  removeBraces,
   removeLastDot,
   splitStringByCommaWithoutCommasInBraces,
 } from "./helpers";
@@ -21,8 +20,7 @@ const convertDate = (str: string) => {
 
 const prepareTechnologiesArr = (technologies: string) => {
   const technologiesArr = splitStringByCommaWithoutCommasInBraces(technologies);
-  const technologiesArrWithoutBraces = removeBraces(technologiesArr);
-  const technologiesArrWithoutLastDotInLastElement = removeLastDot(technologiesArrWithoutBraces);
+  const technologiesArrWithoutLastDotInLastElement = removeLastDot(technologiesArr);
   return technologiesArrWithoutLastDotInLastElement;
 };
 
