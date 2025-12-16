@@ -111,8 +111,6 @@ export const SummarizingField = observer(() => {
     }
   };
 
-  console.log(hasCollisions, duplicatedValues);
-
   return (
     <Flex vertical gap="small" align="stretch" style={{ width: "30%" }}>
       <Button onClick={handleCopy}>Copy Summary (Please paste using Ctrl+V only)</Button>
